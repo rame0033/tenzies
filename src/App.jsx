@@ -1,15 +1,21 @@
 import Die from './components/Die'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Confetti from 'react-confetti'
 import './App.css'
 
 function App() {
   // Store dice values, not components
   const [dice, setDice] = useState(generateNewDice());
+  const buttonRef = useRef(null);
 
+  // Check if the game is won
   const gameWon = dice.every(die => die.isHeld) && dice.every (die => die.value === dice[0].value);
 
-  
+  useEffect(() => {
+    if(gameWon){
+      buttonRef.current.focus(); // Focus the button when the game is won
+    }
+  }, [gameWon])
 
   // Generate an array of 10 random values (1-6)
    function generateNewDice() {
@@ -63,6 +69,11 @@ function App() {
   return (
     <main>
       {gameWon && <Confetti />}
+      
+      <div aria-live="polite" className="sr-only">
+        {gameWon && <p className="win-message">You won! Click "New Game" to play again.</p>}
+      </div>
+
       <h1 className="title">Tenzies</h1>
       <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
 
@@ -70,7 +81,7 @@ function App() {
         {diceElements}
       </div>
 
-      <button className="roll-dice" onClick={rollDice}>{gameWon? "New Game" : "Roll"}</button>
+      <button ref={buttonRef} className="roll-dice" onClick={rollDice}>{gameWon? "New Game" : "Roll"}</button>
     </main>
   )
 }
