@@ -25,11 +25,17 @@ function App() {
     }
 
   function rollDice() {
+    if (!gameWon){
     setDice(oldDice => oldDice.map(die => 
-      die.isHeld?
-      die:
-      {...die, value: Math.floor(Math.random() * 6) + 1} // Roll only unheld dice
-    ))
+        die.isHeld?
+        die:
+        {...die, value: Math.floor(Math.random() * 6) + 1} // Roll only unheld dice
+      ))
+    }
+
+    else{
+      setDice(generateNewDice()); // Reset the game
+    }
   }
 
   // Function to hold a die
